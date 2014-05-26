@@ -1,7 +1,7 @@
 <?php
 
 // Are we in Development mode?
-define('DEVELOPMENT', true);
+define('DEVMODE', true);
 
 
 class Config {
