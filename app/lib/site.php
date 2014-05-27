@@ -17,8 +17,11 @@ require_once(APP_PATH . 'config/database.php');
 // Global Helper Functions
 require_once(APP_PATH . 'lib/globals.php');
 
-// Controller Class
+// BaseController Class
 require_once( APP_PATH . 'lib/controller.php');
+
+// BaseModel Class
+require_once( APP_PATH . 'lib/model.php');
 
 
 /************************************************************
@@ -27,13 +30,9 @@ require_once( APP_PATH . 'lib/controller.php');
 
 class Site {
 
-	public $config;
-	public $database;
-
 	// Apply injected config files
-	public function __construct(Config $config, Database $database) {
-		$this->config		= $config;
-		$this->database		= $database;
+	public function __construct() {
+		$this->config		= new Config;
 
 		// If no controller is specified, use the default.
 		if ( empty($_GET['controller']) ) {
@@ -47,21 +46,24 @@ class Site {
 	// Loads a controller with the given name
 	public function loadController( $controller ) {
 
+		// Determine the expected path for the controller file
+		$path = APP_PATH . 'controller/' . $controller . '.php';
+
 		// Make sure the file exists...
-		if ( file_exists( APP_PATH . 'controller/' . $controller . '.php' )) {
+		if ( file_exists( $path )) {
 
 			// Load the controller class's file
-			include( APP_PATH . 'controller/' . $controller . '.php');
+			include( $path );
 
 			// Format the controller class name to match conventions
-			$controllerClassName = ucfirst($controller) . 'Controller';
+			$controllerClass = ucfirst($controller) . 'Controller';
 
 			// Load the requestted controller class
-			$controllerClass = new $controllerClassName;
+			$this->controller = new $controllerClass($this->config, $this->database);
 
 		// File does not exist. Throw an error message.
 		} else {
-			error('The requested controller does not exist.');
+			error('The requested controller file, "' . $path . '", does not exist.');
 		}
 
 	}

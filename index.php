@@ -16,6 +16,6 @@
 	// Include global site class
 	require_once(APP_PATH . 'lib/site.php');
 
-	$site = new Site( new Config(), new Database() );
+	$site = new Site();
 
  ?>
